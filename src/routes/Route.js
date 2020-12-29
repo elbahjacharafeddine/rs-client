@@ -4,7 +4,7 @@ import { AppContext } from "../context/AppContext";
 
 const Route = ({ component: Component, roles, ...rest }) => {
   let { user } = useContext(AppContext);
-
+ 
   return (
     <ReactRoute
       {...rest}

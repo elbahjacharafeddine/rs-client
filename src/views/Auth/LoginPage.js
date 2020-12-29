@@ -8,6 +8,7 @@ import { css } from "@emotion/core";
 import ClipLoader from "react-spinners/ClipLoader";
 import { LoopIcon } from "../components/icons";
 
+
 function LoginPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
