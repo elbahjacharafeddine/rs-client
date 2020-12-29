@@ -40,7 +40,6 @@ const App = () => (
 );
 
 const MainLayout = () => {
-
   return <div className="page">
   <div className="flex-fill">
     <NavBar />

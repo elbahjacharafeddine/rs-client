@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import AuthorReport from "../../Author/AuthorReport";
 const ProfileHeader = ({ profile }) => {
-  return (
+  return ( 
     <div className="card">
       <div className="card-body">
         <div className="row mb-3">
