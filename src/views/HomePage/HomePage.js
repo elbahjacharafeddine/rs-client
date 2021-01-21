@@ -21,7 +21,7 @@ const HomePage = () => {
         </div>
         <p className="empty-title h3">Bienvenue sur la page d'accueil </p>
         <p className="empty-subtitle text-muted">
-          Essayez de utiliser la barre de recherche pour trouver l'auteur que
+          Essayez d'utiliser la barre de recherche pour trouver l'auteur que
           vous recherchez.
         </p>
         <div className="empty-action">
@@ -46,13 +46,13 @@ const HomePage = () => {
             Etant {UserHelper.userShortBio(user)}
           </p>
           <p className="empty-subtitle text-muted">
-            vous pouvez gerer cette equipe
+            vous pouvez gérer cette equipe
           </p>
           {user.teamsHeaded.map(({ abbreviation, _id }) => (
             <div className="empty-action">
               <Link to={`/team/${_id}`} className="btn btn-primary">
                 <SettingsIcon />
-                Gérer votre equipe {abbreviation}
+                Gérer votre équipe {abbreviation}
               </Link>
             </div>
           ))}
