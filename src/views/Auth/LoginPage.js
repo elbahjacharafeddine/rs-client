@@ -78,7 +78,7 @@ function LoginPage() {
               <form className="card" onSubmit={handleSubmit}>
                 <div className="card-body ">
                   <div className="card-title">
-                    Connectez-vous à votre compte using email password
+                    Connectez-vous à votre compte
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Adresse email</label>
