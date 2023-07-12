@@ -2,7 +2,10 @@ import React, { Component } from "react";
 import OrgChart from "@balkangraph/orgchart.js";
 import "../../assets/css/orgChart.css";
 
-
+import { OrganizationChart } from 'primereact/organizationchart';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 
 export default class extends Component {
   constructor(props) {
@@ -24,23 +27,23 @@ export default class extends Component {
   componentDidMount() {
     var printIcon = '<img src="https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/print-512.png">'
     let that = this;
-    OrgChart.templates.diva.field_1 = '<text  style="font-size: 14px;"  x="102" y="144" text-anchor="middle">{val}</text>';
-    OrgChart.templates.group.field_0 = '<text  style="font-size: 24px;"  x="70" y="35" >{val}</text>';
-    OrgChart.templates.group.link = '<path stroke-linejoin="round" stroke="#aeaeae" stroke-width="1px" fill="none" d="M{xa},{ya} {xb},{yb} {xc},{yc} L{xd},{yd}" />';
-    OrgChart.templates.group.min = Object.assign({}, OrgChart.templates.group);
-    OrgChart.templates.group.min.imgs = "{val}";
-    OrgChart.templates.group.min.description = '<text width="230" text-overflow="multiline" style="font-size: 14px;" fill="#aeaeae" x="125" y="100" text-anchor="middle">{val}</text>';
-    OrgChart.templates.diva.plus = "";
-    OrgChart.templates.diva.minus = "";
-    OrgChart.templates.diva.exportMenuButton = '<div style="position:absolute;right:{p}px;top:{p}px; width:40px;height:50px;cursor:pointer" control-export-menu=""  >' + printIcon + "</div>";
-    this.chart = new OrgChart(this.divRef.current, {
-      layout: OrgChart.tree,
+    OrganizationChart.templates.diva.field_1 = '<text  style="font-size: 14px;"  x="102" y="144" text-anchor="middle">{val}</text>';
+    OrganizationChart.templates.group.field_0 = '<text  style="font-size: 24px;"  x="70" y="35" >{val}</text>';
+    OrganizationChart.templates.group.link = '<path stroke-linejoin="round" stroke="#aeaeae" stroke-width="1px" fill="none" d="M{xa},{ya} {xb},{yb} {xc},{yc} L{xd},{yd}" />';
+    OrganizationChart.templates.group.min = Object.assign({}, OrganizationChart.templates.group);
+    OrganizationChart.templates.group.min.imgs = "{val}";
+    OrganizationChart.templates.group.min.description = '<text width="230" text-overflow="multiline" style="font-size: 14px;" fill="#aeaeae" x="125" y="100" text-anchor="middle">{val}</text>';
+    OrganizationChart.templates.diva.plus = "";
+    OrganizationChart.templates.diva.minus = "";
+    OrganizationChart.templates.diva.exportMenuButton = '<div style="position:absolute;right:{p}px;top:{p}px; width:40px;height:50px;cursor:pointer" control-export-menu=""  >' + printIcon + "</div>";
+    this.chart = new OrganizationChart(this.divRef.current, {
+      layout: OrganizationChart.tree,
       nodes: this.props.nodes,
-      scaleInitial: OrgChart.match.boundary,
-      nodeMouseClick: OrgChart.action.expandCollapse,
+      scaleInitial: OrganizationChart.match.boundary,
+      nodeMouseClick: OrganizationChart.action.expandCollapse,
       template: "diva",
       enableSearch: false,
-      mouseScrool: OrgChart.action.none,
+      mouseScrool: OrganizationChart.action.none,
       sticky: false,
       nodeBinding: {
         imgs: function (sender, node) {
@@ -64,7 +67,7 @@ export default class extends Component {
       menu: {
         pdfWithTitle: {
           text: "Imprimer l'arborescence",
-          icon: OrgChart.icon.pdf(24, 24),
+          icon: OrganizationChart.icon.pdf(24, 24),
           onClick: function () {
             this.exportPDF({
               filename: `${that.props.fileName}.pdf`,

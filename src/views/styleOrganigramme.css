@@ -1,0 +1,27 @@
+.chart-container .p-person {
+    width: 100px;
+    /* height: 120px; */
+    font-size: 10px;
+  }
+ 
+  .chart-container .p-person .person-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .chart-container .p-person .person-name {
+    font-size: 30px;
+  }
+  
+  .chart-container .p-person .person-title {
+    font-size: 8px;
+  } 
+  
+  .organigramme-container {
+    overflow-x: auto;
+  }
+  
+  .chart-wrapper {
+    display: inline-block;
+  }
+  
