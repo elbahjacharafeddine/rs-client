@@ -5,11 +5,12 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import { AppContext } from '../context/AppContext';
 import PageHeader from './components/PageHeader';
-import { useState, useCallback, useEffect, useContext } from 'react';
+import { useState, useCallback, useEffect, useContext, useRef } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import styleOrganigramme from '../views/styleOrganigramme.css'
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 const Organigramme = () => {
@@ -67,7 +68,7 @@ const Organigramme = () => {
                 orgChartNodes.data.forEach(e => {
                     if (e.stpid === element.id && e.title) {
                         console.log(e.name + "chef de " + element.name);
-                        e.title = e.title + " "+ element.name
+                        e.title = e.title + " " + element.name
                         setDataChefsEquipes((x) => [...x, e])
                     }
                 })
@@ -110,40 +111,45 @@ const Organigramme = () => {
         return node.label;
     };
 
+    const chartRef = useRef(null);
+
     const handlePrint = () => {
-        const doc = new jsPDF();
+        const chartWrapper = chartRef.current;
       
-        const chartContainer = document.querySelector('.chart-container');
-        const chartWidth = chartContainer.offsetWidth;
-        const chartHeight = chartContainer.offsetHeight;
+        // Convertir le contenu de la charte en une image base64 avec l'option useCORS
+        html2canvas(chartWrapper, { useCORS: true }).then((canvas) => {
+          const chartImage = canvas.toDataURL('image/png');
       
-        // Créer un canvas et dessiner l'image sur celui-ci
-        const canvas = document.createElement('canvas');
-        canvas.width = chartWidth;
-        canvas.height = chartHeight;
+          // Créer un nouveau document PDF
+          const doc = new jsPDF();
+          const width = doc.internal.pageSize.getWidth();
+          const height = doc.internal.pageSize.getHeight();
       
-        const context = canvas.getContext('2d');
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, chartWidth, chartHeight);
+          // Ajouter le titre avec la date actuelle décalée à gauche
+          const title = 'Organigramme de Laboratoire LTI';
+          const currentDate = new Date().toLocaleDateString('fr-FR');
+          const titleWithDate = `${title} - ${currentDate}`;
+          const titleX = 10;
+          const titleY = 20;
+          const dateX = titleX + doc.getStringUnitWidth(titleWithDate) * doc.internal.getFontSize();
+          const dateY = titleY;
+          doc.setFontSize(16);
+          doc.text(titleWithDate, titleX, titleY);
+          doc.text(currentDate, dateX, dateY);
       
-        const chartImage = new Image();
-        chartImage.src = chartContainer.toDataURL('image/png');
+          // Ajouter l'image à votre document PDF
+          doc.addImage(chartImage, 'PNG', 0, 30, width, 100);
       
-        chartImage.onload = () => {
-          context.drawImage(chartImage, 0, 0, chartWidth, chartHeight);
-      
-          // Obtenir les données URL de l'image à partir du canvas
-          const imageData = canvas.toDataURL('image/jpeg');
-          doc.addImage(imageData, 'JPEG', 10, 10, 190, 0);
-      
-          // Télécharger le fichier PDF
-          doc.save('organigramme.pdf');
-        };
+          // Enregistrer le document PDF
+          doc.save('arborescence.pdf');
+        });
       };
       
       
-      
-      
+
+
+
+
 
     return (
         <>
@@ -156,12 +162,11 @@ const Organigramme = () => {
             </div>
             {!isLoading ?
                 <div className="organigramme-container">
-                    <button onClick={handlePrint}>Imprimer</button>
-                    <div className="chart-wrapper">
+                    <button className='btn btn-primary' onClick={handlePrint}>Imprimer</button>
+                    <div className="chart-wrapper" ref={chartRef}>
                         <OrganizationChart value={datta} nodeTemplate={nodeTemplate} className="chart-container" />
                     </div>
                 </div>
-
                 :
                 <>
                     <p>L'organigramme se charge ...</p>

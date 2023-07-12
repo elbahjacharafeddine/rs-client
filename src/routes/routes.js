@@ -92,17 +92,17 @@ const entitiesPathsCategory = {
     {
       title: "Organigramme",
       path: "/labTree",
-      component: LabTree,
+      component: Organigramme,
       inMenu: true,
       roles: ["LABORATORY_HEAD"],
     },
-    {
-      title: "Organigramme",
-      path: "/labTreee",
-      component: Organigram,
-      inMenu: true,
-      roles: ["LABORATORY_HEAD"],
-    },
+    // {
+    //   title: "Organigramme",
+    //   path: "/labTreee",
+    //   component: Organigramme,
+    //   inMenu: true,
+    //   roles: ["LABORATORY_HEAD"],
+    // },
     {
       title: "Équipe",
       path: "/team/:teamId",
