@@ -92,7 +92,7 @@ const entitiesPathsCategory = {
     {
       title: "Organigramme",
       path: "/labTree",
-      component: Organigram,
+      component: Organigramme,
       inMenu: true,
       roles: ["LABORATORY_HEAD"],
     },
