@@ -28,9 +28,157 @@ const Organigramme = () => {
     const [dataChefsEquipes, setDataChefsEquipes] = useState([]);
     //data pour les membres d'equipes
     const [dataMembres, setDataMembres] = useState([])
+    //les couleurs 
+    const colors = [
+        "aliceblue",
+        "antiquewhite",
+        "aqua",
+        "aquamarine",
+        "beige",
+        "bisque",
+        "black",
+        "blanchedalmond",
+        "blue",
+        "blueviolet",
+        "brown",
+        "burlywood",
+        "cadetblue",
+        "chartreuse",
+        "chocolate",
+        "coral",
+        "cornflowerblue",
+        "cornsilk",
+        "crimson",
+        "cyan",
+        "darkblue",
+        "darkcyan",
+        "darkgoldenrod",
+        "darkgray",
+        "darkgreen",
+        "darkkhaki",
+        "darkmagenta",
+        "darkolivegreen",
+        "darkorange",
+        "darkorchid",
+        "darkred",
+        "darksalmon",
+        "darkseagreen",
+        "darkslateblue",
+        "darkslategray",
+        "darkturquoise",
+        "darkviolet",
+        "deeppink",
+        "deepskyblue",
+        "dimgray",
+        "dodgerblue",
+        "firebrick",
+        "floralwhite",
+        "forestgreen",
+        "fuchsia",
+        "gainsboro",
+        "ghostwhite",
+        "gold",
+        "goldenrod",
+        "gray",
+        "green",
+        "greenyellow",
+        "honeydew",
+        "hotpink",
+        "indianred",
+        "indigo",
+        "ivory",
+        "khaki",
+        "lavender",
+        "lavenderblush",
+        "lawngreen",
+        "lemonchiffon",
+        "lightblue",
+        "lightcoral",
+        "lightcyan",
+        "lightgoldenrodyellow",
+        "lightgray",
+        "lightgreen",
+        "lightpink",
+        "lightsalmon",
+        "lightseagreen",
+        "lightskyblue",
+        "lightslategray",
+        "lightsteelblue",
+        "lightyellow",
+        "lime",
+        "limegreen",
+        "linen",
+        "magenta",
+        "maroon",
+        "mediumaquamarine",
+        "mediumblue",
+        "mediumorchid",
+        "mediumpurple",
+        "mediumseagreen",
+        "mediumslateblue",
+        "mediumspringgreen",
+        "mediumturquoise",
+        "mediumvioletred",
+        "midnightblue",
+        "mintcream",
+        "mistyrose",
+        "moccasin",
+        "navajowhite",
+        "navy",
+        "oldlace",
+        "olive",
+        "olivedrab",
+        "orange",
+        "orangered",
+        "orchid",
+        "palegoldenrod",
+        "palegreen",
+        "paleturquoise",
+        "palevioletred",
+        "papayawhip",
+        "peachpuff",
+        "peru",
+        "pink",
+        "plum",
+        "powderblue",
+        "purple",
+        "rebeccapurple",
+        "red",
+        "rosybrown",
+        "royalblue",
+        "saddlebrown",
+        "salmon",
+        "sandybrown",
+        "seagreen",
+        "seashell",
+        "sienna",
+        "silver",
+        "skyblue",
+        "slateblue",
+        "slategray",
+        "snow",
+        "springgreen",
+        "steelblue",
+        "tan",
+        "teal",
+        "thistle",
+        "tomato",
+        "turquoise",
+        "violet",
+        "wheat",
+        "white",
+        "whitesmoke",
+        "yellow",
+        "yellowgreen"
+      ];
+
+      const getRandomIndex =(list) => {
+        const randomIndex = Math.floor(Math.random() * list.length);
+        return randomIndex;
+      }
 
     // fonction pour le mappage
-    const childernDataMembres = (listMembres, item) => {
+    const childernDataMembres = (listMembres, item,color) => {
         return listMembres
             .filter((e) => e.stpid === item.stpid && e.id != item.id)
             .map((e) => {
@@ -40,18 +188,22 @@ const Organigramme = () => {
                     className: 'p-person',
                     expanded: true,
                     data: { name: e.name, avatar: e.img },
+                    style: { background: color }
                 };
+                
             });
     };
 
     const childrenData = dataChefsEquipes.map((item) => {
+        const randomIndex = getRandomIndex(colors);
         return {
             label: item.title,
             type: 'person',
             className: 'p-person',
             expanded: true,
             data: { name: item.name, avatar: item.img },
-            children: childernDataMembres(dataMembres, item),
+            children: childernDataMembres(dataMembres, item,colors[randomIndex]),
+            style: { background: colors[randomIndex] }
         };
     });
 
@@ -91,7 +243,8 @@ const Organigramme = () => {
             className: 'p-person',
             expanded: true,
             data: { name: dataChefLab.name, avatar: dataChefLab.img },
-            children: childrenData
+            children: childrenData,
+            style:{background:"azure"}
         }]
 
     const nodeTemplate = (node) => {
