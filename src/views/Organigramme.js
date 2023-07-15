@@ -20,6 +20,8 @@ const Organigramme = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [nodes, setNodes] = useState([]);
 
+    const [laboratoire, setLaboratoire] = useState("")
+
     // data pour chef de laboratoire
     const [dataChefLab, setDataChefLab] = useState("");
     //fin
@@ -170,15 +172,15 @@ const Organigramme = () => {
         "whitesmoke",
         "yellow",
         "yellowgreen"
-      ];
+    ];
 
-      const getRandomIndex =(list) => {
+    const getRandomIndex = (list) => {
         const randomIndex = Math.floor(Math.random() * list.length);
         return randomIndex;
-      }
+    }
 
     // fonction pour le mappage
-    const childernDataMembres = (listMembres, item,color) => {
+    const childernDataMembres = (listMembres, item, color) => {
         return listMembres
             .filter((e) => e.stpid === item.stpid && e.id != item.id)
             .map((e) => {
@@ -190,7 +192,7 @@ const Organigramme = () => {
                     data: { name: e.name, avatar: e.img },
                     style: { background: color }
                 };
-                
+
             });
     };
 
@@ -202,7 +204,7 @@ const Organigramme = () => {
             className: 'p-person',
             expanded: true,
             data: { name: item.name, avatar: item.img },
-            children: childernDataMembres(dataMembres, item,colors[randomIndex]),
+            children: childernDataMembres(dataMembres, item, colors[randomIndex]),
             style: { background: colors[randomIndex] }
         };
     });
@@ -212,6 +214,10 @@ const Organigramme = () => {
         orgChartNodes = await laboratoryService.getNodesForOrgChart();
         console.log(orgChartNodes.data[0]);
         setDataChefLab(orgChartNodes.data[0])
+        const phrase = orgChartNodes.data[0].title;
+        const nouvellePhrase = phrase.replace(/chef de /i, "");
+        const phraseFinale = "Organigramme de " + nouvellePhrase;
+        setLaboratoire(phraseFinale)
         console.log(orgChartNodes.data);
 
         orgChartNodes.data.forEach(element => {
@@ -244,7 +250,7 @@ const Organigramme = () => {
             expanded: true,
             data: { name: dataChefLab.name, avatar: dataChefLab.img },
             children: childrenData,
-            style:{background:"azure"}
+            style: { background: "azure" }
         }]
 
     const nodeTemplate = (node) => {
@@ -268,37 +274,37 @@ const Organigramme = () => {
 
     const handlePrint = () => {
         const chartWrapper = chartRef.current;
-      
+
         // Convertir le contenu de la charte en une image base64 avec l'option useCORS
         html2canvas(chartWrapper, { useCORS: true }).then((canvas) => {
-          const chartImage = canvas.toDataURL('image/png');
-      
-          // Créer un nouveau document PDF
-          const doc = new jsPDF();
-          const width = doc.internal.pageSize.getWidth();
-          const height = doc.internal.pageSize.getHeight();
-      
-          // Ajouter le titre avec la date actuelle décalée à gauche
-          const title = 'Organigramme de Laboratoire LTI';
-          const currentDate = new Date().toLocaleDateString('fr-FR');
-          const titleWithDate = `${title} - ${currentDate}`;
-          const titleX = 10;
-          const titleY = 20;
-          const dateX = titleX + doc.getStringUnitWidth(titleWithDate) * doc.internal.getFontSize();
-          const dateY = titleY;
-          doc.setFontSize(16);
-          doc.text(titleWithDate, titleX, titleY);
-          doc.text(currentDate, dateX, dateY);
-      
-          // Ajouter l'image à votre document PDF
-          doc.addImage(chartImage, 'PNG', 0, 30, width, 100);
-      
-          // Enregistrer le document PDF
-          doc.save('arborescence.pdf');
+            const chartImage = canvas.toDataURL('image/png');
+
+            // Créer un nouveau document PDF
+            const doc = new jsPDF();
+            const width = doc.internal.pageSize.getWidth();
+            const height = doc.internal.pageSize.getHeight();
+
+            // Ajouter le titre avec la date actuelle décalée à gauche
+            const title = laboratoire;
+            const currentDate = new Date().toLocaleDateString('fr-FR');
+            const titleWithDate = `${title} - ${currentDate}`;
+            const titleX = 10;
+            const titleY = 20;
+            const dateX = titleX + doc.getStringUnitWidth(titleWithDate) * doc.internal.getFontSize();
+            const dateY = titleY;
+            doc.setFontSize(16);
+            doc.text(titleWithDate, titleX, titleY);
+            doc.text(currentDate, dateX, dateY);
+
+            // Ajouter l'image à votre document PDF
+            doc.addImage(chartImage, 'PNG', 0, 30, width, 100);
+
+            // Enregistrer le document PDF
+            doc.save('arborescence.pdf');
         });
-      };
-      
-      
+    };
+
+
 
 
 
@@ -310,8 +316,12 @@ const Organigramme = () => {
                 <PageHeader
                     title={`Organigramme de laboratoire ${UserHelper.userHeadedLaboratories(
                         user
+
                     )}`}
+
+
                 />
+
             </div>
             {!isLoading ?
                 <div className="organigramme-container">
