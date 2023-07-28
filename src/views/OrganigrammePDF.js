@@ -1,4 +1,4 @@
-export const exportToPDF = (organizationChart) => {
+export const exportToPDF = (organizationChartdata) => {
     // Créez une nouvelle instance du document PDF
     const doc = new jsPDF(); // ou new pdfMake.createPdf()
   

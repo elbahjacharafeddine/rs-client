@@ -6,7 +6,7 @@ const makeAuthentificationService = (api) => ({
 const makeScraperService = (api) => ({
   authorSearch: (authorName) => api.get(`/author-search/${authorName}`),
   getAuthorData: (platform, authorId) =>
-    api.get(`/author/${platform}/${authorId}`),
+    api.get(`/auth/${platform}/${authorId}`),
   getJournalData: (jouranlName,year) => api.get(`/journal/${jouranlName}/${year}`),
 });
 

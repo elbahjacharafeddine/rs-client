@@ -12,11 +12,15 @@ import styleOrganigramme from '../views/styleOrganigramme.css'
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+import ReactDOMServer from 'react-dom/server';
+
+
+import domtoimage from 'dom-to-image';
 
 const Organigramme = () => {
     const { user, ApiServices, UserHelper } = useContext(AppContext);
     const { laboratoryService } = ApiServices;
-
+    const [printed, setPrinted] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [nodes, setNodes] = useState([]);
 
@@ -187,7 +191,7 @@ const Organigramme = () => {
                 return {
                     label: 'Membre',
                     type: 'person',
-                    className: 'p-person',
+                    className: `${printed ? 'p-person' : 'pp-person'}`,
                     expanded: true,
                     data: { name: e.name, avatar: e.img },
                     style: { background: color }
@@ -201,7 +205,7 @@ const Organigramme = () => {
         return {
             label: item.title,
             type: 'person',
-            className: 'p-person',
+            className: `${printed ? 'p-person' : 'pp-person'}`,
             expanded: true,
             data: { name: item.name, avatar: item.img },
             children: childernDataMembres(dataMembres, item, colors[randomIndex]),
@@ -225,7 +229,7 @@ const Organigramme = () => {
                 // console.log(element.name +" " +element.id);
                 orgChartNodes.data.forEach(e => {
                     if (e.stpid === element.id && e.title) {
-                        console.log(e.name + "chef de " + element.name);
+                        // console.log(e.name + "chef de " + element.name);
                         e.title = e.title + " " + element.name
                         setDataChefsEquipes((x) => [...x, e])
                     }
@@ -246,7 +250,7 @@ const Organigramme = () => {
         {
             label: dataChefLab.title,
             type: 'person',
-            className: 'p-person',
+            className: `${printed ? 'p-person' : 'pp-person'}`,
             expanded: true,
             data: { name: dataChefLab.name, avatar: dataChefLab.img },
             children: childrenData,
@@ -272,37 +276,49 @@ const Organigramme = () => {
 
     const chartRef = useRef(null);
 
-    const handlePrint = () => {
-        const chartWrapper = chartRef.current;
 
-        // Convertir le contenu de la charte en une image base64 avec l'option useCORS
-        html2canvas(chartWrapper, { useCORS: true }).then((canvas) => {
-            const chartImage = canvas.toDataURL('image/png');
 
-            // Créer un nouveau document PDF
-            const doc = new jsPDF();
-            const width = doc.internal.pageSize.getWidth();
-            const height = doc.internal.pageSize.getHeight();
 
-            // Ajouter le titre avec la date actuelle décalée à gauche
-            const title = laboratoire;
-            const currentDate = new Date().toLocaleDateString('fr-FR');
-            const titleWithDate = `${title} - ${currentDate}`;
-            const titleX = 10;
-            const titleY = 20;
-            const dateX = titleX + doc.getStringUnitWidth(titleWithDate) * doc.internal.getFontSize();
-            const dateY = titleY;
-            doc.setFontSize(16);
-            doc.text(titleWithDate, titleX, titleY);
-            doc.text(currentDate, dateX, dateY);
+    const handlePrint = async() => {
+        setPrinted(false)
+        const chart = chartRef.current;
+        const chartHeight = chart.scrollHeight; // Utilisez scrollHeight pour obtenir la hauteur totale, y compris la partie non visible
+        const a4Height = 841.89; // Hauteur d'une page A4 en points
+        const numPages = Math.ceil(chartHeight / a4Height);
+        const pdf = new jsPDF(); // A4 size page of PDF
+    
+        const addPageToPDF = async(i) => {
+           await domtoimage.toBlob(chart, { 
+                height: a4Height,
+                style: {
+                    transform: `translateY(${-i * a4Height}px)`,
+                    transformOrigin: 'top'
+                }
+            }).then(blob => {
+                let imgData = URL.createObjectURL(blob);
+                const imgProps= pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    
+                if (i !== 0) {
+                    pdf.addPage();
+                }
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'NONE', 0, 0);
+                if (i === numPages - 1) {
+                    pdf.save("download.pdf");
+                } else {
+                    addPageToPDF(i + 1);
+                }
+            });
+        }
+    
+        await addPageToPDF(0);
+        window.location.reload()
+    }
 
-            // Ajouter l'image à votre document PDF
-            doc.addImage(chartImage, 'PNG', 0, 30, width, 100);
 
-            // Enregistrer le document PDF
-            doc.save('arborescence.pdf');
-        });
-    };
+
+
 
 
 
@@ -316,18 +332,20 @@ const Organigramme = () => {
                 <PageHeader
                     title={`Organigramme de laboratoire ${UserHelper.userHeadedLaboratories(
                         user
-
                     )}`}
-
-
                 />
 
             </div>
             {!isLoading ?
-                <div className="organigramme-container">
-                    <button className='btn btn-primary' onClick={handlePrint}>Imprimer</button>
-                    <div className="chart-wrapper" ref={chartRef}>
-                        <OrganizationChart value={datta} nodeTemplate={nodeTemplate} className="chart-container" />
+
+                <div  className={`${printed ? 'organigramme-container' : 'organigramme-containerr'}`}>
+                    {/* <ReactToPrint
+                        trigger={() => <button onClick={handlePrintClick}>Print this out!</button>}
+                        // content={() => chartRef.current}
+                    /> */}
+                    <button onClick={handlePrint} className='btn btn-primary'>Imprimer</button>
+                    <div className={`${printed ? 'chart-wrapper' : 'chart-wrapperr'}`} ref={chartRef} >
+                        <OrganizationChart value={datta} nodeTemplate={nodeTemplate} className={`${printed ? 'chart-container' : 'chart-containerr'}`}/>
                     </div>
                 </div>
                 :

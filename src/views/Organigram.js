@@ -8,7 +8,7 @@ import PageHeader from './components/PageHeader';
 import { useState, useCallback, useEffect, useContext, useRef } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import styleOrganigramme from '../views/styleOrganigramme.css'
+import styleOrganigramme from '../views/styleOrganigram.css'
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
