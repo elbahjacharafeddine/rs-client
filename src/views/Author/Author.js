@@ -127,7 +127,8 @@ const Author = (props) => {
     }
   }, []);
 
-  const ws = new WebSocket('ws://localhost:2000');
+  // const ws = new WebSocket('ws://localhost:2000');
+   const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
 
   const getAuthorDataa = useCallback(async () => {
     try {
@@ -138,7 +139,7 @@ const Author = (props) => {
       // if (noResultFound) setNoResultFound(false);
 
       // Changez l'URL en conséquence
-      // const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+     
 
 
       ws.onopen = () => {
