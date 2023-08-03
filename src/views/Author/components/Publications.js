@@ -1,22 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import Publication from "./Publication";
 
 const Publications = ({ author, setAuthor, platform }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   useEffect(() => {
-    setTimeout(() => {
-      const publicationsTmp = author.publications.map((p) => ({
-        ...p,
-        searchedFor: true,
-      }));
-      setAuthor(() => ({
-        ...author,
-        publications: publicationsTmp,
-      }));
-    }, author.publications.length * 4000);
-  }, []);
+    const interval = setInterval(() => {
+      if (currentIndex < author.publications.length) {
+        const publicationsTmp = [...author.publications];
+        publicationsTmp[currentIndex] = {
+          ...publicationsTmp[currentIndex],
+          searchedFor: true,
+        };
+        setAuthor((prevAuthor) => ({
+          ...prevAuthor,
+          publications: publicationsTmp,
+        }));
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      }
+    }, 30);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [currentIndex, author.publications, setAuthor]);
 
   const updatePublication = (index, publication) => {
-    const i = author.publications.map(p=>p.title).indexOf(publication.title);
+    const i = author.publications.map(p => p.title).indexOf(publication.title);
     let tempPublications = author.publications;
     tempPublications[i] = publication;
     setAuthor(() => ({

@@ -127,6 +127,7 @@ const Author = (props) => {
 
   const getAuthorDataa = useCallback(async () => {
     try {
+      console.log(authorId);
       setAuthor();
       setIsLoading(true);
       if (isError) setIsError(false);
@@ -138,8 +139,7 @@ const Author = (props) => {
 
       ws.onopen = () => {
         console.log('WebSocket connection opened');
-        console.log(id);
-        ws.send(JSON.stringify({ id }))
+        ws.send(JSON.stringify(authorId ))
       };
 
       ws.onmessage = (event) => {
