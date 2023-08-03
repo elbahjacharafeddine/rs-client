@@ -21,13 +21,13 @@ import ErrorFound from "../components/ErrorFound";
 
 
 import Skeleton from '@mui/material/Skeleton';
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
 
 const Author = (props) => {
   const [messages, setMessages] = useState([]);
-  const id = 56515263800;
-
-
-
   const { platform, authorId } = useParams();
   const [author, setAuthor] = useState(null);
   const [isError, setIsError] = useState(false);
@@ -40,6 +40,9 @@ const Author = (props) => {
   const { user, ApiServices, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
   const { scraperService, userService, teamService } = ApiServices;
+
+  const [serverError, setServerError] = useState(false)
+  const [chargement, setChargement] = useState(true)
 
   const getAuthorData = useCallback(async () => {
     try {
@@ -114,7 +117,7 @@ const Author = (props) => {
     console.log("possibleNames");
     console.log(possibleNames);
     console.log("trimName(author.name)");
-    console.log(author.name);
+    // console.log(author.name);
     if (
       possibleNames.includes(trimName(author.name)) ||
       ["LABORATORY_HEAD", "TEAM_HEAD"].some((r) => user.roles.includes(r))
@@ -124,22 +127,23 @@ const Author = (props) => {
     }
   }, []);
 
+  const ws = new WebSocket('ws://localhost:2000');
 
   const getAuthorDataa = useCallback(async () => {
     try {
-      console.log(authorId);
-      setAuthor();
-      setIsLoading(true);
-      if (isError) setIsError(false);
-      if (noResultFound) setNoResultFound(false);
+      // console.log(authorId);
+      // setAuthor();
+      // setIsLoading(true);
+      // if (isError) setIsError(false);
+      // if (noResultFound) setNoResultFound(false);
 
-      // const ws = new WebSocket('ws://localhost:2000'); // Changez l'URL en conséquence
-      const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+      // Changez l'URL en conséquence
+      // const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
 
 
       ws.onopen = () => {
         console.log('WebSocket connection opened');
-        ws.send(JSON.stringify(authorId ))
+        ws.send(JSON.stringify(authorId))
       };
 
       ws.onmessage = (event) => {
@@ -147,9 +151,15 @@ const Author = (props) => {
         setMessages((prevMessages) => [...prevMessages, receivedData]);
         console.log(receivedData);
 
-        if (receivedData) {
+        if (receivedData.author) {
           setAuthor(receivedData.author);
+          setChargement(false)
           if (user) checkFollowAuthorization(receivedData.author);
+        }
+        else if (receivedData.state) {
+          console.log(receivedData.state);
+          setServerError(true)
+          setChargement(false)
         }
         else {
           pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
@@ -182,10 +192,12 @@ const Author = (props) => {
   return (
     <>
       <div className="row">
-        {isLoading && <LoadingResult />}
-        {noResultFound && <NoResultFound query={authorId} />}
-        {isError && <ErrorFound />}
-        {author && (
+        {/* {isLoading && <LoadingResult />}
+        {noResultFound && <NoResultFound query={authorId} />} */}
+        {serverError && <ErrorFound />}
+
+
+        {author &&
           <Fragment>
             <div className="col-lg-8">
               <AuthorHeader
@@ -211,8 +223,25 @@ const Author = (props) => {
               <Coauthors author={author} />
             </div>
           </Fragment>
-        )}
+        }
+        {chargement &&
 
+          <>
+
+            <Stack spacing={1}>
+              <Skeleton variant="circular" width={100} height={100} />
+              {/* For variant="text", adjust the height via font-size */}
+              <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+              {/* For other variants, adjust the size with `width` and `height` */}
+
+              <Skeleton variant="rectangular" width={710} height={300} />
+
+            </Stack>
+            <Box sx={{ display: 'flex' }} >
+              <CircularProgress />
+            </Box>
+          </>
+        }
 
       </div>
 
