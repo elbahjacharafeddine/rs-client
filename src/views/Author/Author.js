@@ -132,7 +132,9 @@ const Author = (props) => {
       if (isError) setIsError(false);
       if (noResultFound) setNoResultFound(false);
 
-      const ws = new WebSocket('ws://localhost:2000'); // Changez l'URL en conséquence
+      // const ws = new WebSocket('ws://localhost:2000'); // Changez l'URL en conséquence
+      const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+
 
       ws.onopen = () => {
         console.log('WebSocket connection opened');
