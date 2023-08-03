@@ -22,6 +22,7 @@ import "./assets/css/tabler.css";
 
 import "popper.js/dist/popper";
 import "bootstrap/dist/js/bootstrap";
+import Test from './views/Test.js'
 
 const history = createBrowserHistory();
 
@@ -29,6 +30,7 @@ const App = () => (
   <AppProvider>
     <Router history={history}>
       <Switch>
+        <PublicRoute exact path='/test' component={Test}/>
         <PublicRoute exact path="/login" component={LoginPage} />    
         <PublicRoute exact path="/visitors" component={Visitors} />    
         <PublicRoute exact path="/visitors/author-search/:authorName" component={Visitors} />    

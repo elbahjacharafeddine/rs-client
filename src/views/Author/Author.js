@@ -7,7 +7,7 @@ import React, {
   Fragment,
 } from "react";
 
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, json } from "react-router-dom";
 
 import AuthorHeader from "./components/AuthorHeader";
 import Coauthors from "./components/Coauthors";
@@ -19,7 +19,15 @@ import NoResultFound from "../components/NoResultFound";
 import LoadingResult from "../components/LoadingResult";
 import ErrorFound from "../components/ErrorFound";
 
+
+import Skeleton from '@mui/material/Skeleton';
+
 const Author = (props) => {
+  const [messages, setMessages] = useState([]);
+  const id = 'your_id_here';
+
+
+
   const { platform, authorId } = useParams();
   const [author, setAuthor] = useState(null);
   const [isError, setIsError] = useState(false);
@@ -43,7 +51,7 @@ const Author = (props) => {
       if (response.data.author) {
         setAuthor(response.data.author);
         if (user) checkFollowAuthorization(response.data.author);
-      } 
+      }
       else if (response.data.error) setNoResultFound(true);
       else {
         pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
@@ -116,8 +124,47 @@ const Author = (props) => {
     }
   }, []);
 
+
+  const getAuthorDataa = useCallback(async () => {
+    try {
+      setAuthor();
+      setIsLoading(true);
+      if (isError) setIsError(false);
+      if (noResultFound) setNoResultFound(false);
+
+      const ws = new WebSocket('ws://localhost:2000'); // Changez l'URL en conséquence
+
+      ws.onopen = () => {
+        console.log('WebSocket connection opened');
+        console.log(id);
+        ws.send(JSON.stringify({ id }))
+      };
+
+      ws.onmessage = (event) => {
+        const receivedData = JSON.parse(event.data);
+        setMessages((prevMessages) => [...prevMessages, receivedData]);
+        console.log(receivedData);
+
+        if (receivedData) {
+          setAuthor(receivedData.author);
+          if (user) checkFollowAuthorization(receivedData.author);
+        }
+        else {
+          pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
+          setNoResultFound(true);
+        }
+      }
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [authorId]);
+
+
+
   useEffect(() => {
-    getAuthorData();
+    getAuthorDataa();
     if (!user) return;
     if (
       ["LABORATORY_HEAD", "TEAM_HEAD", "RESEARCHER"].some((r) =>
@@ -131,37 +178,47 @@ const Author = (props) => {
 
 
   return (
-    <div className="row">
-      {isLoading && <LoadingResult />}
-      {noResultFound && <NoResultFound query={authorId} />}
-      {isError && <ErrorFound />}
-      {author && (
-        <Fragment>
-          <div className="col-lg-8">
-            <AuthorHeader
-              platform={platform}
-              users={users}
-              user={user}
-              author={author}
-              toggleFollow={toggleFollow}
-              isFollowed={isFollowed}
-              isSendingFollow={isSendingFollow}
-              isAllowedToFollow={isAllowedToFollow}
-            />
-            <Publications
-              platform={platform}
-              author={author}
-              setAuthor={setAuthor}
-            />
-          </div>
-          <div className="col-lg-4">
-            <AuthorCitations author={author} />
-            <Coauthors author={author} />
-          </div>
-        </Fragment>
-      )}
-    </div>
+    <>
+      <div className="row">
+        {isLoading && <LoadingResult />}
+        {noResultFound && <NoResultFound query={authorId} />}
+        {isError && <ErrorFound />}
+        {author && (
+          <Fragment>
+            <div className="col-lg-8">
+              <AuthorHeader
+                platform={platform}
+                users={users}
+                user={user}
+                author={author}
+                toggleFollow={toggleFollow}
+                isFollowed={isFollowed}
+                isSendingFollow={isSendingFollow}
+                isAllowedToFollow={isAllowedToFollow}
+              />
+
+
+              <Publications
+                platform={platform}
+                author={author}
+                setAuthor={setAuthor}
+              />
+            </div>
+            <div className="col-lg-4">
+              <AuthorCitations author={author} />
+              <Coauthors author={author} />
+            </div>
+          </Fragment>
+        )}
+
+
+      </div>
+
+
+
+    </>
   );
+
 };
 
 export default Author;
