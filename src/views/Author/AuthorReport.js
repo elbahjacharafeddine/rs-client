@@ -98,20 +98,20 @@ const AuthorReport = ({ author }) => {
         <View style={styles.table}>
           {/* TableHeader */}
           <View style={styles.tableRow}>
-            <View style={{ ...styles.tableCol, width: "80%" }}>
+            <View style={{ ...styles.tableCol, width: "70%" }}>
               <Text style={styles.tableCell}>Title</Text>
             </View>
-            <View style={{ ...styles.tableCol, width: "10%" }}>
+            <View style={{ ...styles.tableCol, width: "7%" }}>
               <Text style={styles.tableCell}>Année</Text>
             </View>
-            <View style={{ ...styles.tableCol, width: "10%" }}>
+            <View style={{ ...styles.tableCol, width: "7%" }}>
               <Text style={styles.tableCell}>Citations</Text>
             </View>
-            <View style={{ ...styles.tableCol, width: "10%" }}>
+            <View style={{ ...styles.tableCol, width: "7%" }}>
               <Text style={styles.tableCell}>SJR</Text>
             </View>
 
-            <View style={{ ...styles.tableCol, width: "10%" }}>
+            <View style={{ ...styles.tableCol, width: "7%" }}>
               <Text style={styles.tableCell}>IF</Text>
             </View>
           </View>
@@ -122,7 +122,7 @@ const AuthorReport = ({ author }) => {
           )
           .map((publication, index) => (
             <View key={index} style={styles.tableRow}>
-              <View style={{ ...styles.tableCol, width: "80%" }}>
+              <View style={{ ...styles.tableCol, width: "70%" }}>
                 <Text style={styles.tableCell}>{publication.title}</Text>
                 <Text style={{ ...styles.tableCell, color: "gray" }}>
                   {publication.authors.join(", ")}
@@ -140,16 +140,16 @@ const AuthorReport = ({ author }) => {
                     : ""}
                 </Text>
               </View>
-              <View style={{ ...styles.tableCol, width: "10%" }}>
+              <View style={{ ...styles.tableCol, width: "7%" }}>
                 <Text style={styles.tableCell}>{publication.year} </Text>
               </View>
-              <View style={{ ...styles.tableCol, width: "10%" }}>
+              <View style={{ ...styles.tableCol, width: "7%" }}>
                 <Text style={styles.tableCell}>{publication.citation} </Text>
               </View>
-              <View style={{ ...styles.tableCol, width: "10%" }}>
+              <View style={{ ...styles.tableCol, width: "7%" }}>
                 <Text style={styles.tableCell}>{publication.SJR ?? ""}</Text>
               </View>
-              <View style={{ ...styles.tableCol, width: "10%" }}>
+              <View style={{ ...styles.tableCol, width: "7%" }}>
                 <Text style={styles.tableCell}>{publication.IF ?? ""}</Text>
               </View>
             </View>
