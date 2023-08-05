@@ -43,6 +43,11 @@ const Author = (props) => {
 
   const [serverError, setServerError] = useState(false)
   const [chargement, setChargement] = useState(true)
+  const [step, setStep] = useState('Authentification sécurisée')
+  const [message, setMessage] = useState('')
+  const [color, setColor]= useState('black')
+  const [back, setBack] = useState('white')
+  const [plateform,setPlateform] =useState('')
 
   const getAuthorData = useCallback(async () => {
     try {
@@ -127,21 +132,11 @@ const Author = (props) => {
     }
   }, []);
 
-  // const ws = new WebSocket('ws://localhost:2000');
-   const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+  const ws = new WebSocket('ws://localhost:2000');
+  //  const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
 
   const getAuthorDataa = useCallback(async () => {
     try {
-      // console.log(authorId);
-      // setAuthor();
-      // setIsLoading(true);
-      // if (isError) setIsError(false);
-      // if (noResultFound) setNoResultFound(false);
-
-      // Changez l'URL en conséquence
-     
-
-
       ws.onopen = () => {
         console.log('WebSocket connection opened');
         ws.send(JSON.stringify(authorId))
@@ -151,10 +146,11 @@ const Author = (props) => {
         const receivedData = JSON.parse(event.data);
         setMessages((prevMessages) => [...prevMessages, receivedData]);
         console.log(receivedData);
-
+        
         if (receivedData.author) {
           setAuthor(receivedData.author);
           setChargement(false)
+          setServerError(false)
           if (user) checkFollowAuthorization(receivedData.author);
         }
         else if (receivedData.state) {
@@ -162,8 +158,15 @@ const Author = (props) => {
           setServerError(true)
           setChargement(false)
         }
+        else if(receivedData.res){
+          // setMessage(receivedData.res.message)
+          setStep(receivedData.res.step)
+          setPlateform(receivedData.res.plateforme)
+          setColor(receivedData.res.color)
+          setBack(receivedData.res.background)
+        }
         else {
-          pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
+          // pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
           setNoResultFound(true);
         }
       }
@@ -193,8 +196,8 @@ const Author = (props) => {
   return (
     <>
       <div className="row">
-        {/* {isLoading && <LoadingResult />}
-        {noResultFound && <NoResultFound query={authorId} />} */}
+
+        {/* {noResultFound && <NoResultFound query={authorId} />} */}
         {serverError && <ErrorFound />}
 
 
@@ -228,19 +231,18 @@ const Author = (props) => {
         {chargement &&
 
           <>
-
+            {/* 
             <Stack spacing={1}>
-              <Skeleton variant="circular" width={100} height={100} />
-              {/* For variant="text", adjust the height via font-size */}
-              <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-              {/* For other variants, adjust the size with `width` and `height` */}
+              <Skeleton variant="circular" width={100} height={100} /> */}
+            {/* <Skeleton variant="text" sx={{ fontSize: '1rem' }} /> */}
+            {/* <Skeleton variant="rectangular" width={710} height={300} />
 
-              <Skeleton variant="rectangular" width={710} height={300} />
-
-            </Stack>
-            <Box sx={{ display: 'flex' }} >
+            </Stack> */}
+            {/* <Box sx={{ display: 'flex' }} >
               <CircularProgress />
-            </Box>
+            </Box> */}
+
+            <LoadingResult step={step} plateform={plateform} message={message} back={back} color={color} />
           </>
         }
 

@@ -1,49 +1,27 @@
 // WebSocketClient.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useRef } from 'react';
 import { json, useParams } from 'react-router-dom';
-
+import { Toast } from 'primereact/toast';
+import { Button } from 'primereact/button';
 const WebSocketClient = () => {
 
-  const [messages, setMessages] = useState([]);
-  const id = 'your_id_here'; 
-  useEffect(() => {
-    const ws = new WebSocket('ws://localhost:2000'); // Changez l'URL en conséquence
-
-    ws.onopen = () => {
-        console.log('WebSocket connection opened');
-        console.log(id);
-        ws.send(JSON.stringify({id}))
+    const [messages, setMessages] = useState([]);
+    const id = 'your_id_here';
+    const toast = useRef(null);
+    const show = () => {
+        toast.current.show({ severity: 'info', summary: 'Info', detail: 'Message Content' });
     };
 
-    ws.onmessage = (event) => {
-        const receivedData = JSON.parse(event.data);
-        setMessages((prevMessages) => [...prevMessages, receivedData]);
-        
-    };
+    return (
+        <div className="App">
+            <h2>Received Messages:</h2>
+            <div className="card flex justify-content-center">
+                <Toast ref={toast} />
+                <Button onClick={show} label="Show" />
+            </div>
 
-    ws.onclose = () => {
-        console.log('WebSocket connection closed');
-    };
-
-    // return () => {
-    //     ws.close();
-    // };
-}, []);
-
-
-return (
-  <div className="App">
-      <h2>Received Messages:</h2>
-      {id &&<div>Details for ID: {id}</div>};
-      <ul>
-          {messages.map((message, index) => (
-              <li key={index}>
-                  <pre>{JSON.stringify(message, null, 2)}</pre>
-              </li>
-          ))}
-      </ul>
-  </div>
-);
+        </div>
+    );
 };
 
 export default WebSocketClient;
