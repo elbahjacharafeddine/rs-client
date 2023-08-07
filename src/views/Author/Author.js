@@ -62,7 +62,8 @@ const Author = (props) => {
       }
       else if (response.data.error) setNoResultFound(true);
       else {
-        pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
+        // pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
+        console.log("Incapable d'obtenir les données de l'auteur");
       }
     } catch (error) {
       setIsError(true);
@@ -132,14 +133,17 @@ const Author = (props) => {
     }
   }, []);
 
-  // const ws = new WebSocket('ws://localhost:2000');
-   const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+  const ws = new WebSocket('ws://localhost:2000');
+  //  const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
 
   const getAuthorDataa = useCallback(async () => {
     try {
       ws.onopen = () => {
         console.log('WebSocket connection opened');
-        ws.send(JSON.stringify(authorId))
+        const auth = {
+          authorId:authorId
+        }
+        ws.send(JSON.stringify(auth))
       };
 
       ws.onmessage = (event) => {
