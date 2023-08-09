@@ -48,6 +48,7 @@ const Author = (props) => {
   const [color, setColor]= useState('black')
   const [back, setBack] = useState('white')
   const [plateform,setPlateform] =useState('')
+  const [fin, setIsfin] = useState(false)
 
   const getAuthorData = useCallback(async () => {
     try {
@@ -133,8 +134,8 @@ const Author = (props) => {
     }
   }, []);
 
-  // const ws = new WebSocket('ws://localhost:2000');
-   const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+  const ws = new WebSocket('ws://localhost:2000');
+  //  const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
 
   const getAuthorDataa = useCallback(async () => {
     try {
@@ -168,6 +169,10 @@ const Author = (props) => {
           setPlateform(receivedData.res.plateforme)
           setColor(receivedData.res.color)
           setBack(receivedData.res.background)
+        }
+        else if(receivedData.fin){
+          console.log("fin de chargement des publications");
+          setIsfin(true)
         }
         else {
           // pushAlert({ message: "Incapable d'obtenir les données de l'auteur" });
@@ -224,6 +229,7 @@ const Author = (props) => {
                 platform={platform}
                 author={author}
                 setAuthor={setAuthor}
+                isFin={fin}
               />
             </div>
             <div className="col-lg-4">

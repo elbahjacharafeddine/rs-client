@@ -29,10 +29,10 @@ const AuthorHeader = ({
                 {author.name}
                 {isAllowedToFollow && 
                   <FollowingButton
-                    disabled={
-                      author.publications.filter((p) => p.searchedFor)
-                        .length !== author.publications.length
-                    }
+                    // disabled={
+                    //   author.publications.filter((p) => p.searchedFor)
+                    //     .length !== author.publications.length
+                    // }
                     isFollowed={isFollowed}
                     isSendingFollow={isSendingFollow}
                   />}

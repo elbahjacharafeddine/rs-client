@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from "react";
 import Publication from "./Publication";
 
-const Publications = ({ author, setAuthor, platform }) => {
+const Publications = ({ author, setAuthor, platform, isFin }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -62,6 +62,7 @@ const Publications = ({ author, setAuthor, platform }) => {
                     publication={publication}
                     updatePublication={updatePublication}
                     author={author}
+                    isFin={isFin}
                   />
                 ))}
           </tbody>

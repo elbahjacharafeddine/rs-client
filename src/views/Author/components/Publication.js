@@ -9,6 +9,7 @@ const Publication = ({
   updatePublication,
   index,
   platform,
+  isFin,
 }) => {
   const { ApiServices, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
@@ -90,8 +91,8 @@ const Publication = ({
 
   const getJournalData = async () => {
     setIsLoading(true)
-    // const ws = new WebSocket('ws://localhost:2000');
-     const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
+    const ws = new WebSocket('ws://localhost:2000');
+    //  const ws = new WebSocket('wss://rs-scraper-elbahja.onrender.com/'); // Remplacez l'URL en conséquence
 
     const journalName = publication.source
       ? publication.source
@@ -117,18 +118,25 @@ const Publication = ({
     }
 
     ws.onmessage = (event) => {
-      const receivedData = JSON.parse(event.data);
+      try {
+        const receivedData = JSON.parse(event.data);
       console.log(receivedData.SJR);
       setIsFetched(true);
         updatePublication(index, {
           ...publication,
-          IF: receivedData.SJR,
+          // IF: receivedData.SJR,
           SJR: receivedData.SJR,
           searchedFor: true,
         });
         setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false)
+        setIsFetched(false)
+      }
+      
     }
-    console.log("fonction getJournalData is clicked ...");
+    
 
   }
 
@@ -137,7 +145,7 @@ const Publication = ({
   }, []);
 
   const fetchedButton = (
-    <button
+    <button disabled={!isFin}
       className="btn  btn-sm m-3 btn-outline-secondary "
       onClick={getJournalData}
     >
