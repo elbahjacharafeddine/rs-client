@@ -1,9 +1,17 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Publication from "./Publication";
+
+
 
 const Publications = ({ author, setAuthor, platform, isFin }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const tableRef = useRef(null);
+  const [listPublications, setListPublications] = useState([])
+  
   useEffect(() => {
+    setListPublications(author.publications)
+
+    
     const interval = setInterval(() => {
       if (currentIndex < author.publications.length) {
         const publicationsTmp = [...author.publications];
@@ -20,6 +28,7 @@ const Publications = ({ author, setAuthor, platform, isFin }) => {
     }, 30);
 
     return () => {
+     
       clearInterval(interval);
     };
   }, [currentIndex, author.publications, setAuthor]);
@@ -34,10 +43,12 @@ const Publications = ({ author, setAuthor, platform, isFin }) => {
     }));
   };
 
+  
+
   return (
     <div className="card">
       <div className="table-responsive">
-        <table className="table card-table table-vcenter text-nowrap ">
+        <table className="table card-table table-vcenter text-nowrap " id="myTable">
           <thead>
             <tr>
               <th>Titre</th>

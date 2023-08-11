@@ -12,6 +12,8 @@ import { NotificationIcon } from "../components/icons";
 import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
+import Axios from "axios";
+import { dark } from "@mui/material/styles/createPalette";
 
 const Notifications = () => {
   const { user, ApiServices, alertService } = useContext(AppContext);
@@ -27,7 +29,11 @@ const Notifications = () => {
       const response = await notificationsService.findUserNotifications(
         user._id
       );
-      if (response.data) setNotifications(response.data);
+      if (response.data) {
+        setNotifications(response.data)
+        console.log("response for user notifications is:");
+        console.log(response.data);
+      }
       else throw Error();
     } catch (error) {
       pushAlert({
@@ -38,17 +44,20 @@ const Notifications = () => {
     }
   }, [user._id]);
 
+
   const getFollowedResearchers = useCallback(async () => {
     try {
       const filter =
-        user.roles.includes("LABORATORY_HEAD") 
+        user.roles.includes("LABORATORY_HEAD")
           ? { laboratory_abbreviation: user.laboratoriesHeaded[0].abbreviation }
           : user.roles.includes("TEAM_HEAD")
-          ? { team_abbreviation: user.teamsHeaded[0].abbreviation }
-          : {};
+            ? { team_abbreviation: user.teamsHeaded[0].abbreviation }
+            : {};
       const response = await userService.getFollowedUsers(filter);
-      if (response.status === 200 && response.data)
+      if (response.status === 200 && response.data) {
+        console.log("response for followed user is:");
         setFollowedResearchers(response.data);
+      }
       else throw Error();
     } catch (error) {
       setIsLoading(false);
@@ -68,35 +77,57 @@ const Notifications = () => {
       );
 
       try {
-        const response = await scraperService.getAuthorData(
-          followedUser.platform,
-          followedUser.authorId
-        );
+        // let newPublications =[]
+        // const ws = new WebSocket('ws://localhost:2000');
+        // ws.onopen = () => {
+        //   console.log('WebSocket connection opened for notifications ');
+        //   const auth = {
+        //     authorId:followedUser.authorId
+        //   }
+        //   ws.send(JSON.stringify(auth))
+        // };
 
-        if (!response.data.author) throw new Error();
+        // const response = await scraperService.getAuthorData(
+        //   followedUser.platform,
+        //   followedUser.authorId
+        // );
 
-        const scrapedPublications = response.data.author.publications;
+        // const response = await Axios.get('http://localhost:2000/auth/scopus/'+followedUser.authorId)
+        const response = await Axios.get('https://rs-scraper-elbahja.onrender.com/auth/scopus/'+followedUser.authorId)
+        console.log("");
+        console.log(response.data);
 
-        console.log("scrapedPublications : ", scrapedPublications.length);
+        // ws.onmessage = (event) => {
+        //   const receivedData = JSON.parse(event.data);
+        //   console.log(receivedData);
 
-        const storedPublicationsTitles = followedUser.publications.map(
-          ({ title }) => title
-        );
 
-        console.log(
-          "storedPublicationsTitles : ",
-          storedPublicationsTitles.length
-        );
+          if (!response.data.author) throw new Error();
+          // if (!receivedData.author) throw new Error();
 
-        const newPublications = scrapedPublications.filter(
-          ({ title }) => !storedPublicationsTitles.includes(title)
-        );
+          const scrapedPublications = response.data.author.publications;
+          // const scrapedPublications = receivedData.author.publications
 
-        console.log(
-          "%cNew publications of %s",
-          "color: #8a6d3b;background-color: #fcf8e3;",
-          `${followedUser.firstName} ${followedUser.lastName} : ${newPublications.length}`
-        );
+          console.log("scrapedPublications : ", scrapedPublications.length);
+
+          const storedPublicationsTitles = followedUser.publications.map(
+            ({ title }) => title
+          );
+
+          console.log(
+            "storedPublicationsTitles : ",
+            storedPublicationsTitles.length
+          );
+
+          const newPublications = scrapedPublications.filter(
+            ({ title }) => !storedPublicationsTitles.includes(title)
+          );
+
+          console.log(
+            "%cNew publications of %s",
+            "color: #8a6d3b;background-color: #fcf8e3;",
+            `${followedUser.firstName} ${followedUser.lastName} : ${newPublications.length}`
+          );
 
         const responses = await Promise.all(
           newPublications.map(
@@ -109,6 +140,7 @@ const Notifications = () => {
               })
           )
         );
+
       } catch (error) {
         pushAlert({
           message:
