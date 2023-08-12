@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: "1rem",
   },
-  tableCell: { margin: "auto", marginTop: 5, fontSize: 10 },
+  tableCell: { margin: "auto", marginTop: 5, fontSize: 10, },
+  tableCel: { marginTop: 5, fontSize: 10, },
 });
 
 // Create Document Component
@@ -123,11 +124,11 @@ const AuthorReport = ({ author }) => {
           .map((publication, index) => (
             <View key={index} style={styles.tableRow}>
               <View style={{ ...styles.tableCol, width: "70%" }}>
-                <Text style={styles.tableCell}>{publication.title}</Text>
-                <Text style={{ ...styles.tableCell, color: "gray" }}>
+                <Text style={styles.tableCel}>{publication.title}</Text>
+                <Text style={{ marginTop: 5, fontSize: 10, color: "gray" }}>
                   {publication.authors.join(", ")}
                 </Text>
-                <Text style={{ ...styles.tableCell, color: "gray" }}>
+                <Text style={{ ...styles.tableCel, color: "gray" }}>
                   {publication.source ? publication.source : ""}
 
                   {publication.extraInformation &&

@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import Publication from "./Publication";
 
-
+import $ from 'jquery';
+import 'datatables';
 
 const Publications = ({ author, setAuthor, platform, isFin }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,8 +11,15 @@ const Publications = ({ author, setAuthor, platform, isFin }) => {
   
   useEffect(() => {
     setListPublications(author.publications)
-
-    
+    if (tableRef.current) {
+      try {
+        $(tableRef.current).DataTable();
+      } catch (error) {
+        console.error('Error initializing DataTable:', error);
+      }
+    }
+    console.log(listPublications);
+    console.log(author.publications);
     const interval = setInterval(() => {
       if (currentIndex < author.publications.length) {
         const publicationsTmp = [...author.publications];
@@ -31,6 +39,9 @@ const Publications = ({ author, setAuthor, platform, isFin }) => {
      
       clearInterval(interval);
     };
+
+    
+
   }, [currentIndex, author.publications, setAuthor]);
 
   const updatePublication = (index, publication) => {
@@ -43,12 +54,12 @@ const Publications = ({ author, setAuthor, platform, isFin }) => {
     }));
   };
 
-  
+
 
   return (
     <div className="card">
       <div className="table-responsive">
-        <table className="table card-table table-vcenter text-nowrap " id="myTable">
+        <table className="table card-table table-vcenter text-nowrap " >
           <thead>
             <tr>
               <th>Titre</th>

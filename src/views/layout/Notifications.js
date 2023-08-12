@@ -142,10 +142,12 @@ const Notifications = () => {
         );
 
       } catch (error) {
-        pushAlert({
-          message:
-            "Incapable  to check if a followed researcher have new publication",
-        });
+        // pushAlert({
+        //   message:
+        //     // "Incapable  to check if a followed researcher have new publication",
+        //     ""
+        // });
+        console.log(error);
       } finally {
         if (followedUsers.length === index + 1) {
           findUserNotifications();
